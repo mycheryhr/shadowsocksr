@@ -4,7 +4,7 @@
 
 TMP1=`mktemp`
 
-number=`netstat -anp |grep 'ESTABLISHED' |grep 'python' |awk -F "[:| ]" '/33520/{print $20}' |sort -u`
+number=`netstat -anp |grep 'ESTABLISHED' |grep 'python' |awk -F "[:]" '/33520/{print $2}' |awk -F "    " '{print $2}' |sort -u`
 
 #微信企业号的CropID
 CropID='wx80179d3a3eb675c2'
