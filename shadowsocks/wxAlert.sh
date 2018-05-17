@@ -1,5 +1,6 @@
 #!/bin/bash
-
+## crontab 
+## */30 9,22 * * * /root/shadowsocksr/shadowsocks/wxAlert.sh > /dev/null 2>&1
 
 TMP1=`mktemp`
 
