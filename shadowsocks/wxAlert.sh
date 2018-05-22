@@ -52,6 +52,7 @@ function body() {
 
 echo $number| tr ' ' '\n' > $TMP1
 if [[ `cat $TMP1|wc -l` -ge 3 ]];then
+    for i in `netstat -anp |grep 'ESTABLISHED' |grep 'python' |awk -F "[:]" '/33520/{print $2}' |awk -F "    " '{print $2}' |sort -u`; do curl -s "http://www.cip.cc/$i" ;done | grep -vE "^$|#|;|URL" > $TMP1
     curl -l -H "Content-type: application/json" -X POST -d "$(body )" $PURL
 fi
 rm -f $TMP1
