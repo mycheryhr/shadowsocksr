@@ -27,9 +27,9 @@ function body() {
     local TagID="@all"
     Ent=$'\n'
     Date=$(date '+%Y年%m月%d日 %H:%M:%S\n')
-    Tit="服务器告警(V*P*N)"
+    Tit="服务器告警(V*P*N) IP:`cat $LOG | sort -u | grep -vE "^$|#|;" | tr ' ' '\n' |wc -l`"
     Content=`cat $TMP1`
-    Msg=$Date$Ent$Tit$Ent$Content
+    Msg=$Date$Ent$Content
     #Msg=$Date$Tit$Ent$(cat /tmp/message.txt|sed 's/%//g')
     #拼接msg主体文件,包含日期,主题,报警内容.并删除报警内容中的'%'号.
     #Url="http://www.zabbix.com"
@@ -57,8 +57,8 @@ function body() {
 echo $number| tr ' ' '\n' >> $LOG
 
 if [[ ${MINUTE} -eq 0 ]];then
-    if [ ${HOUR} -eq 12 -o ${HOUR} -eq 22 ];then
-        for i in `cat $LOG | sort -u | grep -vE "^$|#|;" | tr ' ' '\n'`; do curl -s "http://www.cip.cc/$i" ;done | grep -vE "^$|#|;|URL|地址" > $TMP1
+    if [ ${HOUR} -eq 13 -o ${HOUR} -eq 22 ];then
+        for i in `cat $LOG | sort -u | grep -vE "^$|#|;" | tr ' ' '\n'`; do curl -s "http://www.cip.cc/$i" ;done | grep -vE "^$|#|;|URL" > $TMP1
         curl -l -H "Content-type: application/json" -X POST -d "$(body )" $PURL
         rm -f $TMP1 $LOG
     fi
