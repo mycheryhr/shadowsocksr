@@ -2,9 +2,11 @@
 ## crontab 
 ## */1 8,22 * * * /root/shadowsocksr/shadowsocks/wxAlertNew.sh > /dev/null 2>&1
 
-TMP1="/tmp/conn_ssr.log"
-MINUTE=`date "+%M"`
+
+TMP1=`mktemp`
 HOUR=`date "+%H"`
+MINUTE=`date "+%M"`
+LOG="/tmp/conn_ssr.log"
 
 number=`netstat -anp |grep 'ESTABLISHED' |grep 'python' |awk -F "[:]" '/33520/{print $2}' |awk -F "    " '{print $2}' |sort -u`
 
@@ -52,12 +54,12 @@ function body() {
     printf '}\n'
 }
 
-echo $number| tr ' ' '\n' >> $TMP1
+echo $number| tr ' ' '\n' >> $LOG
 
 if [[ ${MINUTE} -eq 0 ]];then
     if [ ${HOUR} -eq 12 -o ${HOUR} -eq 22 ];then
-        for i in `cat $TMP1 | sort -u | grep -vE "^$|#|;" | tr ' ' '\n'`; do curl -s "http://www.cip.cc/$i" ;done | grep -vE "^$|#|;|URL|地址|运营商" > $TMP1
+        for i in `cat $LOG | sort -u | grep -vE "^$|#|;" | tr ' ' '\n'`; do curl -s "http://www.cip.cc/$i" ;done | grep -vE "^$|#|;|URL|地址" > $TMP1
         curl -l -H "Content-type: application/json" -X POST -d "$(body )" $PURL
-        rm -f $TMP1
+        rm -f $TMP1 $LOG
     fi
 fi
