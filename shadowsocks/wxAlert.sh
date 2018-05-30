@@ -54,8 +54,8 @@ function body() {
 
 echo $number| tr ' ' '\n' >> $LOG
 
-if [[ ${MINUTE} -gt 0 ]];then
-    if [ ${HOUR} -eq 15 -o ${HOUR} -eq 22 ];then
+if [[ ${MINUTE} -eq 0 ]];then
+    if [ ${HOUR} -eq 8 -o ${HOUR} -eq 22 ];then
         TMP1=`mktemp`
         for i in `cat $LOG | sort -u | grep -vE "^$|#|;" | tr ' ' '\n'`; do taobaoip $i;done > $TMP1
         curl -l -H "Content-type: application/json" -X POST -d "$(body )" $PURL
