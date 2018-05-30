@@ -1,0 +1,30 @@
+#!/usr/bin/env python
+# -*- coding=utf-8 -*-
+## filename:taobaoip 
+## import some module
+
+import urllib
+import json
+import os
+import sys
+import socket
+import re
+
+reload(sys) 
+sys.setdefaultencoding('utf8')
+
+## define api string which comes from taobao
+api_url="http://ip.taobao.com/service/getIpInfo.php?ip="
+## define a function
+def ip_info():
+    localIP=socket.gethostbyname(socket.gethostname())
+    ip = sys.argv[1]
+    ip_express="[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}"
+    compiled_reobj = re.compile(ip_express)
+    if not compiled_reobj.search(ip) and ip != localIP:
+       ip = socket.gethostbyname(sys.argv[1])
+    data=urllib.urlopen(api_url+ip).read()
+    datadict=json.loads(data)
+    return ip + "  " + datadict["data"]["country"] + " " + datadict["data"]["area"] + " " + datadict["data"]["region"] + " " + datadict["data"]["city"] + " " + datadict["data"]["isp"]
+if __name__ == "__main__":
+   print ip_info()
