@@ -1,8 +1,10 @@
 #!/bin/bash
 ## crontab 
-## */30 9,22 * * * /root/shadowsocksr/shadowsocks/wxAlert.sh > /dev/null 2>&1
+## */1 * * * * /root/shadowsocksr/shadowsocks/wxAlert.sh > /dev/null 2>&1
 
-TMP1=`mktemp`
+HOUR=`date "+%H"`
+MINUTE=`date "+%M"`
+LOG="/tmp/conn_ssr.log"
 
 number=`netstat -anp |grep 'ESTABLISHED' |grep 'python' |awk -F "[:]" '/33520/{print $2}' |awk -F "    " '{print $2}' |sort -u`
 
@@ -23,13 +25,13 @@ function body() {
     local TagID="@all"
     Ent=$'\n'
     Date=$(date '+%Y年%m月%d日 %H:%M:%S\n')
-    Tit="服务器告警(V*P*N)"
+    Tit="服务器告警(V*P*N) IP:`cat $LOG | sort -u | grep -vE "^$|#|;" | tr ' ' '\n' |wc -l`"
     Content=`cat $TMP1`
-    Msg=$Date$Ent$Tit$Ent$Content
+    Msg=$Date$Ent$Content
     #Msg=$Date$Tit$Ent$(cat /tmp/message.txt|sed 's/%//g')
     #拼接msg主体文件,包含日期,主题,报警内容.并删除报警内容中的'%'号.
     #Url="http://www.zabbix.com"
-    Pic="http://cdn.aixifan.com/dotnet/20130418/umeditor/dialogs/emotion/images/ac/35.gif"
+    #Pic="http://cdn.aixifan.com/dotnet/20130418/umeditor/dialogs/emotion/images/ac/35.gif"
     #Pic="http://cdn.aixifan.com/dotnet/20130418/umeditor/dialogs/emotion/images/ac2/24.gif"
     printf '{\n'
     printf '\t"touser": "'"$UserID"\"",\n"
@@ -50,9 +52,14 @@ function body() {
     printf '}\n'
 }
 
-echo $number| tr ' ' '\n' > $TMP1
-if [[ `cat $TMP1|wc -l` -ge 3 ]];then
-    for i in `netstat -anp |grep 'ESTABLISHED' |grep 'python' |awk -F "[:]" '/33520/{print $2}' |awk -F "    " '{print $2}' |sort -u`; do curl -s "http://www.cip.cc/$i" ;done | grep -vE "^$|#|;|URL" > $TMP1
-    curl -l -H "Content-type: application/json" -X POST -d "$(body )" $PURL
+echo $number| tr ' ' '\n' >> $LOG
+
+if [[ ${MINUTE} -gt 0 ]];then
+    if [ ${HOUR} -eq 15 -o ${HOUR} -eq 22 ];then
+        TMP1=`mktemp`
+        for i in `cat $LOG | sort -u | grep -vE "^$|#|;" | tr ' ' '\n'`; do taobaoip $i;done > $TMP1
+        curl -l -H "Content-type: application/json" -X POST -d "$(body )" $PURL
+        cat $LOG | sort -u | grep -vE "^$|#|;" | tr ' ' '\n' >> /tmp/ALLIP
+        #rm -f $TMP1 $LOG
+    fi
 fi
-rm -f $TMP1
