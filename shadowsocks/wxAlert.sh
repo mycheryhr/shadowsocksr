@@ -60,6 +60,6 @@ if [[ ${MINUTE} -eq 0 ]];then
         for i in `cat $LOG | sort -u | grep -vE "^$|#|;" | tr ' ' '\n'`; do taobaoip $i;done > $TMP1
         curl -l -H "Content-type: application/json" -X POST -d "$(body )" $PURL
         cat $LOG | sort -u | grep -vE "^$|#|;" | tr ' ' '\n' >> /tmp/ALLIP
-        #rm -f $TMP1 $LOG
+        rm -f $TMP1 $LOG
     fi
 fi
