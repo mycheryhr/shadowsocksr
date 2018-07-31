@@ -1,6 +1,6 @@
 #!/bin/bash
 ## crontab 
-## */1 8,22 * * * /root/shadowsocksr/shadowsocks/wxAlertNew.sh > /dev/null 2>&1
+## 0 8,22 * * * /root/shadowsocksr/shadowsocks/wxAlertNew.sh > /dev/null 2>&1
 
 HOUR=`date "+%H"`
 MINUTE=`date "+%M"`
