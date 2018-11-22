@@ -27,4 +27,4 @@ def ip_info():
     datadict=json.loads(data)
     return ip + "  " + datadict["data"]["country"] + " " + datadict["data"]["area"] + " " + datadict["data"]["region"] + " " + datadict["data"]["city"] + " " + datadict["data"]["isp"]
 if __name__ == "__main__":
-   print ip_info()
+   print ip_info().encode('UTF-8')
