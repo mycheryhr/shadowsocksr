@@ -57,7 +57,7 @@ echo $number| tr ' ' '\n' >> $LOG
 if [[ ${MINUTE} -eq 0 ]];then
     if [ ${HOUR} -eq 8 -o ${HOUR} -eq 22 ];then
         TMP1=`mktemp`
-        cat $LOG | sort -r |uniq -c |sort -n -t ' ' -k 2 -r | grep -vE "^$|#|;" | awk -F " " '{print $1 "    "}' > /tmp/ip.txt
+        cat $LOG | sort -r |uniq -c |sort -n -t ' ' -k 2 -r | grep -vE "^$|#|;" | awk -F " " '{print $1 "    "}'  | sed '$d' > /tmp/ip.txt
         for i in `cat $LOG | sort -r |uniq -c |sort -n -t ' ' -k 2 -r| awk -F " " '{print $2}' | grep -vE "^$|#|;" | tr ' ' '\n'`; do taobaoip $i;done > /tmp/ipinfo.txt
         paste /tmp/ip.txt /tmp/ipinfo.txt > $TMP1
         curl -l -H "Content-type: application/json" -X POST -d "$(body )" $PURL
