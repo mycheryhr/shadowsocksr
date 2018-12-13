@@ -26,7 +26,7 @@ function body() {
     Ent=$'\n'
     Date=$(date '+%Y年%m月%d日 %H:%M:%S\n')
     Tit="服务器告警(V*P*N) IP:`cat $LOG | sort -u | grep -vE "^$|#|;" | tr ' ' '\n' |wc -l`"
-    Content=`cat $TMP1`
+    Content=`cat $TMP1 | grep "\."`
     Msg=$Date$Ent$Content
     #Msg=$Date$Tit$Ent$(cat /tmp/message.txt|sed 's/%//g')
     #拼接msg主体文件,包含日期,主题,报警内容.并删除报警内容中的'%'号.
